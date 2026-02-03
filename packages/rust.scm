@@ -20,8 +20,10 @@
   #:use-module (gnu packages rust)
   #:use-module (guix packages)
   #:use-module (guix download)
+  #:use-module (guix gexp)
   #:use-module (guix build-system gnu)
   #:use-module (guix utils)
+  #:use-module (guix platform)
   #:use-module ((guix licenses) #:prefix license:))
 
 ;;; Commentary:
