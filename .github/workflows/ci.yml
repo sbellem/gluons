@@ -1,0 +1,47 @@
+name: Test Channel
+
+on:
+  push:
+    branches: [main, ci]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Guix
+        uses: PromyLOPh/guix-install-action@v1.5
+        with:
+          pullAfterInstall: false
+
+      - name: Pull Guix (rust-team branch)
+        run: |
+          sudo -i guix pull --disable-authentication \
+            --channels=/home/runner/work/gluons/gluons/channels.scm
+
+      - name: Test channel loads
+        run: |
+          sudo -i guix time-machine --disable-authentication \
+            -C /home/runner/work/gluons/gluons/channels.scm \
+            -- describe
+
+      - name: Dry-run build rust-1.91
+        run: |
+          sudo -i guix time-machine --disable-authentication \
+            -C /home/runner/work/gluons/gluons/channels.scm \
+            -- build -e '(@ (rust) rust-1.91)' --dry-run
+
+      - name: Dry-run build rust-1.92
+        run: |
+          sudo -i guix time-machine --disable-authentication \
+            -C /home/runner/work/gluons/gluons/channels.scm \
+            -- build -e '(@ (rust) rust-1.92)' --dry-run
+
+      - name: Dry-run build rust-1.93
+        run: |
+          sudo -i guix time-machine --disable-authentication \
+            -C /home/runner/work/gluons/gluons/channels.scm \
+            -- build -e '(@ (rust) rust-1.93)' --dry-run
