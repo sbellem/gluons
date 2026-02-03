@@ -106,21 +106,35 @@ ge13ca993e8ccb9ba9847cc330696e02839f328f7/jemalloc"))
       (arguments
        (substitute-keyword-arguments (package-arguments base-rust)
          ((#:phases phases)
-          `(modify-phases ,phases
-             (replace 'install
-               ;; Use ./x.py install for Rust 1.91+ instead of manually
-               ;; copying files, as the build output structure changed.
-               (lambda* (#:key outputs #:allow-other-keys)
-                 (let ((out (assoc-ref outputs "out"))
-                       (cargo-out (assoc-ref outputs "cargo")))
-                   ;; Note: Don't specify "rustc std" - it triggers generate-copyright
-                   ;; which fails on checksum mismatches with vendored crates.
-                   (invoke "./x.py" "install")
-                   ;; Install cargo to its separate output
-                   (substitute* "config.toml"
-                     (("prefix = \"[^\"]*\"")
-                      (format #f "prefix = ~s" cargo-out)))
-                   (invoke "./x.py" "install" "cargo")))))))))))
+	    #~(modify-phases #$phases
+              ;; it errored out while compiling due to rustc stack size
+	      (add-before 'build 'set-stack-size
+                (lambda _
+                  (setenv "RUST_MIN_STACK" "16777216")))
+              (replace 'install
+                ;; Rust 1.91+ outputs to stage2 instead of stage1.
+                ;; Cannot use './x.py install' as it runs generate-copyright
+                ;; which fails due to patched cargo checksums.
+                (lambda* (#:key outputs #:allow-other-keys)
+                  (let* ((out (assoc-ref outputs "out"))
+                         (cargo-out (assoc-ref outputs "cargo"))
+                         (build (string-append "build/"
+                                  #$(platform-rust-target
+                                     (lookup-platform-by-target-or-system
+                                      (or (%current-target-system)
+                                          (%current-system)))))))
+                    (with-directory-excursion build
+                      (install-file "stage2/bin/rustc"
+                                    (string-append out "/bin"))
+                      (install-file "stage2-tools-bin/cargo"
+                                    (string-append cargo-out "/bin"))
+                      (for-each delete-file
+                                (find-files "stage2/lib" "\\.rmeta$"))
+                      (for-each delete-file
+                                (find-files "stage2/lib/rustlib"
+                                            "^librustc_driver.*\\.so$"))
+                      (copy-recursively "stage2/lib"
+                                        (string-append out "/lib")))))))))))))
 
 (define-public rust-1.92
   (let ((base-rust
