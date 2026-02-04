@@ -9,6 +9,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust-version: ['1.91', '1.92', '1.93']
     steps:
       - uses: actions/checkout@v4
 
@@ -18,17 +21,13 @@ jobs:
           version: "1.5.0"
           pullAfterInstall: false
 
-      - name: Pull Guix (rust-team branch)
-        run: guix pull --disable-authentication --channels=channels.scm
+      - name: Dry-run build rust-${{ matrix.rust-version }}
+        run: |
+          guix time-machine --disable-authentication --channels=channels.scm \
+            -- build -e '(@ (rust) rust-${{ matrix.rust-version }})' --dry-run
 
-      - name: Test channel loads
-        run: guix time-machine --disable-authentication --channels=channels.scm -- describe
-
-      - name: Dry-run build rust-1.91
-        run: guix time-machine --disable-authentication --channels=channels.scm -- build -e '(@ (rust) rust-1.91)' --dry-run
-
-      - name: Dry-run build rust-1.92
-        run: guix time-machine --disable-authentication --channels=channels.scm -- build -e '(@ (rust) rust-1.92)' --dry-run
-
-      - name: Dry-run build rust-1.93
-        run: guix time-machine --disable-authentication --channels=channels.scm -- build -e '(@ (rust) rust-1.93)' --dry-run
+      - name: Dry-run build default rust
+        if: matrix.rust-version == '1.93'
+        run: |
+          guix time-machine --disable-authentication --channels=channels.scm \
+            -- build rust --dry-run
