@@ -13,8 +13,10 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install Guix
-        uses: PromyLOPh/guix-install-action@v1.5
+      #  uses: PromyLOPh/guix-install-action@v1.5
+        uses: sbellem/guix-install-action@dev
         with:
+          version: "1.5.0"
           pullAfterInstall: false
 
       - name: Pull Guix (rust-team branch)
