@@ -21,7 +21,8 @@ jobs:
 
       - name: Pull Guix (rust-team branch)
         run: |
-          sudo -i guix pull --disable-authentication \
+          sudo /var/guix/profiles/per-user/root/current-guix/bin/guix \
+            pull --disable-authentication \
             --channels=/home/runner/work/gluons/gluons/channels.scm
 
       - name: Test channel loads
@@ -32,18 +33,18 @@ jobs:
 
       - name: Dry-run build rust-1.91
         run: |
-          sudo -i guix time-machine --disable-authentication \
+          guix time-machine --disable-authentication \
             -C /home/runner/work/gluons/gluons/channels.scm \
             -- build -e '(@ (rust) rust-1.91)' --dry-run
 
       - name: Dry-run build rust-1.92
         run: |
-          sudo -i guix time-machine --disable-authentication \
+          guix time-machine --disable-authentication \
             -C /home/runner/work/gluons/gluons/channels.scm \
             -- build -e '(@ (rust) rust-1.92)' --dry-run
 
       - name: Dry-run build rust-1.93
         run: |
-          sudo -i guix time-machine --disable-authentication \
+          guix time-machine --disable-authentication \
             -C /home/runner/work/gluons/gluons/channels.scm \
             -- build -e '(@ (rust) rust-1.93)' --dry-run
