@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    #env:
+    #  GUIX: /var/guix/profiles/per-user/root/current-guix/bin/guix
     steps:
       - uses: actions/checkout@v4
 
@@ -27,7 +29,7 @@ jobs:
 
       - name: Test channel loads
         run: |
-          sudo -i guix time-machine --disable-authentication \
+          guix time-machine --disable-authentication \
             -C /home/runner/work/gluons/gluons/channels.scm \
             -- describe
 
