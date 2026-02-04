@@ -9,44 +9,26 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    #env:
-    #  GUIX: /var/guix/profiles/per-user/root/current-guix/bin/guix
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Guix
-      #  uses: PromyLOPh/guix-install-action@v1.5
         uses: sbellem/guix-install-action@dev
         with:
           version: "1.5.0"
           pullAfterInstall: false
 
       - name: Pull Guix (rust-team branch)
-        run: |
-          sudo /var/guix/profiles/per-user/root/current-guix/bin/guix \
-            pull --disable-authentication \
-            --channels=/home/runner/work/gluons/gluons/channels.scm
+        run: guix pull --disable-authentication --channels=channels.scm
 
       - name: Test channel loads
-        run: |
-          guix time-machine --disable-authentication \
-            -C /home/runner/work/gluons/gluons/channels.scm \
-            -- describe
+        run: guix time-machine --disable-authentication --channels=channels.scm -- describe
 
       - name: Dry-run build rust-1.91
-        run: |
-          guix time-machine --disable-authentication \
-            -C /home/runner/work/gluons/gluons/channels.scm \
-            -- build -e '(@ (rust) rust-1.91)' --dry-run
+        run: guix time-machine --disable-authentication --channels=channels.scm -- build -e '(@ (rust) rust-1.91)' --dry-run
 
       - name: Dry-run build rust-1.92
-        run: |
-          guix time-machine --disable-authentication \
-            -C /home/runner/work/gluons/gluons/channels.scm \
-            -- build -e '(@ (rust) rust-1.92)' --dry-run
+        run: guix time-machine --disable-authentication --channels=channels.scm -- build -e '(@ (rust) rust-1.92)' --dry-run
 
       - name: Dry-run build rust-1.93
-        run: |
-          guix time-machine --disable-authentication \
-            -C /home/runner/work/gluons/gluons/channels.scm \
-            -- build -e '(@ (rust) rust-1.93)' --dry-run
+        run: guix time-machine --disable-authentication --channels=channels.scm -- build -e '(@ (rust) rust-1.93)' --dry-run
