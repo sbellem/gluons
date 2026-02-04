@@ -24,7 +24,6 @@ jobs:
       - name: Dry-run build rust-${{ matrix.rust-version }}
         run: |
           guix time-machine \
-            --disable-authentication \
             --channels=channels.scm \
             -- build -e '(@ (rust) rust-${{ matrix.rust-version }})' --dry-run
 
@@ -32,7 +31,6 @@ jobs:
         if: matrix.rust-version == '1.93'
         run: |
           guix time-machine \
-            --disable-authentication \
             --channels=channels.scm \
             -- build rust --dry-run
 
@@ -53,7 +51,6 @@ jobs:
       - name: Build rust-${{ matrix.rust-version }}
         run: |
           guix time-machine \
-            --disable-authentication \
             --channels=channels.scm \
             -- build -e '(@ (rust) rust-${{ matrix.rust-version }})'
 
@@ -71,6 +68,5 @@ jobs:
       - name: Build default rust
         run: |
           guix time-machine \
-            --disable-authentication \
             --channels=channels.scm \
             -- build rust
