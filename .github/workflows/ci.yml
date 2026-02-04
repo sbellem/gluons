@@ -24,15 +24,15 @@ jobs:
       - name: Dry-run build rust-${{ matrix.rust-version }}
         run: |
           guix time-machine \
-            --channels=channels.scm \
-            -- build -e '(@ (rust) rust-${{ matrix.rust-version }})' --dry-run
+            --channels=guix-channel.scm \
+            -- build -L packages -e '(@ (rust) rust-${{ matrix.rust-version }})' --dry-run
 
       - name: Dry-run build default rust
         if: matrix.rust-version == '1.93'
         run: |
           guix time-machine \
-            --channels=channels.scm \
-            -- build rust --dry-run
+            --channels=guix-channel.scm \
+            -- build -L packages rust --dry-run
 
   build:
     runs-on: ubuntu-latest
@@ -51,8 +51,8 @@ jobs:
       - name: Build rust-${{ matrix.rust-version }}
         run: |
           guix time-machine \
-            --channels=channels.scm \
-            -- build -e '(@ (rust) rust-${{ matrix.rust-version }})'
+            --channels=guix-channel.scm \
+            -- build -L packages -e '(@ (rust) rust-${{ matrix.rust-version }})'
 
   build-default:
     runs-on: ubuntu-latest
@@ -68,5 +68,5 @@ jobs:
       - name: Build default rust
         run: |
           guix time-machine \
-            --channels=channels.scm \
-            -- build rust
+            --channels=guix-channel.scm \
+            -- build -L packages rust
