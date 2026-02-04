@@ -33,7 +33,7 @@ jobs:
         run: |
           guix time-machine \
             --channels=guix-channel.scm \
-            -- build -L packages rust --dry-run
+            -- build -L packages -e '(@ (rust) rust)' --dry-run
 
   build:
     runs-on: ubuntu-latest
@@ -70,4 +70,4 @@ jobs:
         run: |
           guix time-machine \
             --channels=guix-channel.scm \
-            -- build -L packages rust
+            -- build -L packages -e '(@ (rust) rust)'
