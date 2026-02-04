@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  build-dry-run:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -23,11 +23,54 @@ jobs:
 
       - name: Dry-run build rust-${{ matrix.rust-version }}
         run: |
-          guix time-machine --disable-authentication --channels=channels.scm \
+          guix time-machine \
+            --disable-authentication \
+            --channels=channels.scm \
             -- build -e '(@ (rust) rust-${{ matrix.rust-version }})' --dry-run
 
       - name: Dry-run build default rust
         if: matrix.rust-version == '1.93'
         run: |
-          guix time-machine --disable-authentication --channels=channels.scm \
+          guix time-machine \
+            --disable-authentication \
+            --channels=channels.scm \
             -- build rust --dry-run
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust-version: ['1.91', '1.92', '1.93']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Guix
+        uses: sbellem/guix-install-action@dev
+        with:
+          version: "1.5.0"
+          pullAfterInstall: false
+
+      - name: Build rust-${{ matrix.rust-version }}
+        run: |
+          guix time-machine \
+            --disable-authentication \
+            --channels=channels.scm \
+            -- build -e '(@ (rust) rust-${{ matrix.rust-version }})'
+
+  build-default:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Guix
+        uses: sbellem/guix-install-action@dev
+        with:
+          version: "1.5.0"
+          pullAfterInstall: false
+
+      - name: Build default rust
+        run: |
+          guix time-machine \
+            --disable-authentication \
+            --channels=channels.scm \
+            -- build rust
