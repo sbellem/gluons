@@ -1,6 +1,5 @@
 ;; Channels configuration for gluons
-;; Usage: guix time-machine --disable-authentication -C channels.scm -- build ...
-;; (--disable-authentication still needed for gluons channel)
+;; Usage: guix time-machine -C channels.scm -- build ...
 
 (list
  (channel
@@ -15,4 +14,9 @@
  (channel
   (name 'gluons)
   (url "https://codeberg.org/gluonix/gluons.git")
-  (branch "main")))
+  (branch "main")
+  (introduction
+    (make-channel-introduction
+      "8744fbb65ef28f44980fc8c01eb99ba2f8183b91"
+      (openpgp-fingerprint
+        "E39D 2B3D 0564 BA43 7BD9  2756 C38A E0EC CAB7 D5C8")))))
