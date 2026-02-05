@@ -2,7 +2,7 @@ name: Test Channel
 
 on:
   push:
-    branches: [main, ci]
+    branches: [main, ci*]
   pull_request:
     branches: [main]
 
