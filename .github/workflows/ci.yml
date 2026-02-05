@@ -71,3 +71,39 @@ jobs:
           guix time-machine \
             --channels=guix-channel.scm \
             -- build -L packages -e '(@ (rust) rust)'
+
+  build-sysroot-dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Guix
+        uses: sbellem/guix-install-action@dev
+        with:
+          version: "1.5.0"
+          pullAfterInstall: false
+
+      - name: Dry-run build riscv32 sysroot
+        run: |
+          guix time-machine \
+            --channels=guix-channel.scm \
+            -- build -L packages \
+            -e '(@ (rust-sysroot) rust-sysroot-riscv32imac-none-elf)' --dry-run
+
+  build-sysroot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Guix
+        uses: sbellem/guix-install-action@dev
+        with:
+          version: "1.5.0"
+          pullAfterInstall: false
+
+      - name: Build riscv32 sysroot
+        run: |
+          guix time-machine \
+            --channels=guix-channel.scm \
+            -- build -L packages \
+            -e '(@ (rust-sysroot) rust-sysroot-riscv32imac-none-elf)'
