@@ -72,6 +72,7 @@
                         "[rust]\n"
                         "debug = false\n"
                         "jemalloc = false\n"
+                        "default-linker = \"" target-cc "\"\n"
                         "channel = \"stable\"\n"
                         "[target."
                         #$(platform-rust-target
@@ -81,6 +82,7 @@
                         "llvm-config = \""
                         (search-input-file inputs "/bin/llvm-config")
                         "\"\n"
+                        "linker = \"" (which "gcc") "\"\n"
                         "cc = \"" (which "gcc") "\"\n"
                         "cxx = \"" (which "g++") "\"\n"
                         "ar = \"" (which "ar") "\"\n"
